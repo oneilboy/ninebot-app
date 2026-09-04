@@ -16,11 +16,27 @@ jobs:
       - name: Install XcodeGen
         run: brew install xcodegen
 
+      - name: Locate project.yml
+        id: locate
+        run: |
+          FOUND=$(find . -name project.yml -not -path '*/build/*' | head -n1)
+          if [ -z "$FOUND" ]; then
+            echo "Kon project.yml nergens vinden in de repo!"
+            find . -maxdepth 4 -type f
+            exit 1
+          fi
+          PROJECT_DIR=$(dirname "$FOUND")
+          echo "project.yml gevonden in: $PROJECT_DIR"
+          echo "project_dir=$PROJECT_DIR" >> "$GITHUB_OUTPUT"
+
       - name: Generate Xcode project
-        run: xcodegen generate
+        run: |
+          cd "${{ steps.locate.outputs.project_dir }}"
+          xcodegen generate
 
       - name: Build unsigned .app for a real iPhone
         run: |
+          cd "${{ steps.locate.outputs.project_dir }}"
           xcodebuild build \
             -project NinebotApp.xcodeproj \
             -scheme NinebotApp \
@@ -33,6 +49,7 @@ jobs:
 
       - name: Package into .ipa
         run: |
+          cd "${{ steps.locate.outputs.project_dir }}"
           mkdir -p Payload
           cp -r "build/Build/Products/Release-iphoneos/NinebotApp.app" Payload/
           zip -r NinebotApp-unsigned.ipa Payload
@@ -41,5 +58,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: NinebotApp-unsigned-ipa
-          path: NinebotApp-unsigned.ipa
+          path: ${{ steps.locate.outputs.project_dir }}/NinebotApp-unsigned.ipa
           retention-days: 14
