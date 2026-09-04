@@ -1,0 +1,45 @@
+name: Build unsigned IPA
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: macos-14
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Generate Xcode project
+        run: xcodegen generate
+
+      - name: Build unsigned .app for a real iPhone
+        run: |
+          xcodebuild build \
+            -project NinebotApp.xcodeproj \
+            -scheme NinebotApp \
+            -sdk iphoneos \
+            -configuration Release \
+            -derivedDataPath build \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY=""
+
+      - name: Package into .ipa
+        run: |
+          mkdir -p Payload
+          cp -r "build/Build/Products/Release-iphoneos/NinebotApp.app" Payload/
+          zip -r NinebotApp-unsigned.ipa Payload
+
+      - name: Upload IPA as build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: NinebotApp-unsigned-ipa
+          path: NinebotApp-unsigned.ipa
+          retention-days: 14
