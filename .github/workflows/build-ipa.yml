@@ -13,6 +13,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Select latest available Xcode
+        run: |
+          LATEST_XCODE=$(ls /Applications | grep -E '^Xcode_[0-9]+\.[0-9]+(\.[0-9]+)?\.app$' | sort -V | tail -n1)
+          echo "Gevonden: $LATEST_XCODE"
+          sudo xcode-select -s "/Applications/$LATEST_XCODE/Contents/Developer"
+          xcodebuild -version
+
       - name: Install XcodeGen
         run: brew install xcodegen
 
