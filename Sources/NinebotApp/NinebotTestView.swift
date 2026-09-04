@@ -1,7 +1,7 @@
 //
 //  NinebotTestView.swift
 //  Minimaal testscherm om de handshake en snelheidsregister te proberen.
-//  Vervang "JOUW-STEP-BLE-NAAM" door de naam die je step adverteert.
+//  Vervang "E2 Pro 0923" door de naam die je step adverteert.
 //
 
 import SwiftUI
@@ -57,7 +57,7 @@ final class NinebotTestViewModel: ObservableObject {
         isBusy = true
         statusText = "Verbinden..."
 
-        let session = NinebotSession(bleManager: bleManager, deviceName: "JOUW-STEP-BLE-NAAM")
+        let session = NinebotSession(bleManager: bleManager, deviceName: "E2 Pro 0923")
         session.onStateChange = { [weak self] state in
             DispatchQueue.main.async {
                 guard let self = self else { return }
