@@ -1,0 +1,39 @@
+name: NinebotApp
+options:
+  bundleIdPrefix: com.antoine.ninebot
+  deploymentTarget:
+    iOS: "16.0"
+
+targets:
+  NinebotApp:
+    type: application
+    platform: iOS
+    sources:
+      - Sources/NinebotApp
+    info:
+      properties:
+        CFBundleDisplayName: NinebotApp
+        NSBluetoothAlwaysUsageDescription: "Nodig om via Bluetooth met je step te verbinden"
+        UILaunchScreen: {}
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.antoine.ninebotapp
+        SWIFT_VERSION: "5.0"
+        TARGETED_DEVICE_FAMILY: "1"
+        CODE_SIGN_STYLE: Manual
+        CODE_SIGNING_REQUIRED: NO
+        CODE_SIGNING_ALLOWED: NO
+        CODE_SIGN_IDENTITY: ""
+        DEVELOPMENT_TEAM: ""
+
+schemes:
+  NinebotApp:
+    build:
+      targets:
+        NinebotApp: all
+    run:
+      config: Debug
+    archive:
+      config: Release
